@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Gestión de Carreras</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+
+        <img src="assets/img/logo.png" alt="Logo">
+
+        <h1>CENFOTEC</h1>
+
+    </div>
+
+    <nav>
+
+        <ul>
+
+            <li><a href="index.html">Inicio</a></li>
+
+            <li><a href="login.html">Iniciar sesión</a></li>
+
+            <li><a href="perfil.html">Mi Perfil</a></li>
+
+            <li><a href="egresados.html">Egresados</a></li>
+
+            <li><a href="carreras.html">Carreras</a></li>
+
+        </ul>
+
+    </nav>
+
+</header>
+
+<div class="container">
+
+<h2>Registro de Carreras</h2>
+
+<form id="formCarrera">
+
+<div class="form-group">
+
+<label>Nombre de la carrera</label>
+
+<input
+type="text"
+id="nombreCarrera"
+placeholder="Ej. Ingeniería del Software">
+
+</div>
+
+<div class="form-group">
+
+<label>Código</label>
+
+<input
+type="text"
+id="codigo"
+placeholder="IS-101">
+
+</div>
+
+<div class="form-group">
+
+<label>Escuela</label>
+
+<select id="escuela">
+
+<option value="">Seleccione</option>
+
+<option>Ingeniería</option>
+
+<option>Administración</option>
+
+<option>Tecnología</option>
+
+<option>Diseño</option>
+
+</select>
+
+</div>
+
+<div class="form-group">
+
+<label>Duración</label>
+
+<input
+type="text"
+id="duracion"
+placeholder="4 años">
+
+</div>
+
+<div class="form-group full">
+
+<label>Descripción</label>
+
+<textarea
+id="descripcionCarrera"
+placeholder="Descripción de la carrera"></textarea>
+
+</div>
+
+<div class="form-group full">
+
+<button type="submit">
+
+Guardar Carrera
+
+</button>
+
+</div>
+
+</form>
+
+<hr style="margin:40px 0;">
+
+<h2>Carreras Registradas</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Código</th>
+
+<th>Carrera</th>
+
+<th>Escuela</th>
+
+<th>Duración</th>
+
+<th>Acciones</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>IS-101</td>
+
+<td>Ingeniería del Software</td>
+
+<td>Ingeniería</td>
+
+<td>4 años</td>
+
+<td>
+
+<a href="#" class="editar">Editar</a>
+
+<a href="#" class="eliminar">Eliminar</a>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>DW-201</td>
+
+<td>Diseño Web</td>
+
+<td>Tecnología</td>
+
+<td>3 años</td>
+
+<td>
+
+<a href="#" class="editar">Editar</a>
+
+<a href="#" class="eliminar">Eliminar</a>
+
+</td>
+
+</tr>
+<tr>
+
+<td>AD-105</td>
+
+<td>Administración de Empresas</td>
+
+<td>Administración</td>
+
+<td>4 años</td>
+
+<td>
+
+<a href="#" class="editar">Editar</a>
+
+<a href="#" class="eliminar">Eliminar</a>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>CD-301</td>
+
+<td>Ciencia de Datos</td>
+
+<td>Tecnología</td>
+
+<td>4 años</td>
+
+<td>
+
+<a href="#" class="editar">Editar</a>
+
+<a href="#" class="eliminar">Eliminar</a>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>CS-220</td>
+
+<td>Ciberseguridad</td>
+
+<td>Ingeniería</td>
+
+<td>4 años</td>
+
+<td>
+
+<a href="#" class="editar">Editar</a>
+
+<a href="#" class="eliminar">Eliminar</a>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<footer>
+
+<p>
+
+Universidad CENFOTEC © 2026
+
+<br>
+
+Sistema de Gestión de Egresados
+
+</p>
+
+</footer>
+
+<script src="js/script.js"></script>
+
+</body>
+
+</html>
