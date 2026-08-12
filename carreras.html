@@ -1,15 +1,18 @@
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Gestión de Carreras</title>
+<title>Gestión de Carreras</title>
 
-    <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css">
+```
 
 </head>
 
@@ -17,261 +20,179 @@
 
 <header>
 
-    <div class="logo">
+```
+<div class="logo">
 
-        <img src="assets/img/logo.png" alt="Logo">
+    <img src="assets/img/logo.png" alt="Logo CENFOTEC">
 
-        <h1>CENFOTEC</h1>
+    <h1>CENFOTEC</h1>
 
-    </div>
+</div>
 
-    <nav>
+<nav>
 
-        <ul>
+    <ul>
 
-            <li><a href="index.html">Inicio</a></li>
+        <li>
+            <a href="index.html">
+                Inicio
+            </a>
+        </li>
 
-            <li><a href="login.html">Iniciar sesión</a></li>
+        <li>
+            <a href="login.html">
+                Iniciar sesión
+            </a>
+        </li>
 
-            <li><a href="perfil.html">Mi Perfil</a></li>
+        <li>
+            <a href="perfil.html">
+                Mi Perfil
+            </a>
+        </li>
 
-            <li><a href="egresados.html">Egresados</a></li>
+        <li>
+            <a href="egresados.html">
+                Egresados
+            </a>
+        </li>
 
-            <li><a href="carreras.html">Carreras</a></li>
+        <li>
+            <a href="carreras.html">
+                Carreras
+            </a>
+        </li>
 
-        </ul>
+    </ul>
 
-    </nav>
+</nav>
+```
 
 </header>
 
-<div class="container">
+<main class="container">
 
-<h2>Registro de Carreras</h2>
+```
+<h2>Gestión de Carreras</h2>
+
+
+<!-- =========================
+     FORMULARIO DE CARRERAS
+========================== -->
 
 <form id="formCarrera">
 
-<div class="form-group">
+    <div class="form-group">
 
-<label>Nombre de la carrera</label>
+        <label for="nombreCarrera">
+            Nombre de la carrera
+        </label>
 
-<input
-type="text"
-id="nombreCarrera"
-placeholder="Ej. Ingeniería del Software">
+        <input
+            type="text"
+            id="nombreCarrera"
+            placeholder="Ej. Ingeniería de Software"
+            required>
 
-</div>
+    </div>
 
-<div class="form-group">
 
-<label>Código</label>
+    <div class="form-group">
 
-<input
-type="text"
-id="codigo"
-placeholder="IS-101">
+        <label for="descripcionCarrera">
+            Descripción
+        </label>
 
-</div>
+        <textarea
+            id="descripcionCarrera"
+            rows="4"
+            placeholder="Ingrese una descripción de la carrera"
+            required></textarea>
 
-<div class="form-group">
+    </div>
 
-<label>Escuela</label>
 
-<select id="escuela">
+    <div
+        id="mensajeCarrera"
+        class="mensaje">
+    </div>
 
-<option value="">Seleccione</option>
 
-<option>Ingeniería</option>
+    <div class="form-group full">
 
-<option>Administración</option>
+        <button type="submit">
+            Guardar carrera
+        </button>
 
-<option>Tecnología</option>
-
-<option>Diseño</option>
-
-</select>
-
-</div>
-
-<div class="form-group">
-
-<label>Duración</label>
-
-<input
-type="text"
-id="duracion"
-placeholder="4 años">
-
-</div>
-
-<div class="form-group full">
-
-<label>Descripción</label>
-
-<textarea
-id="descripcionCarrera"
-placeholder="Descripción de la carrera"></textarea>
-
-</div>
-
-<div class="form-group full">
-
-<button type="submit">
-
-Guardar Carrera
-
-</button>
-
-</div>
+    </div>
 
 </form>
 
+
 <hr style="margin:40px 0;">
 
-<h2>Carreras Registradas</h2>
+
+<!-- =========================
+     LISTA DE CARRERAS
+========================== -->
+
+<h2>Lista de Carreras</h2>
+
 
 <table>
 
-<thead>
+    <thead>
 
-<tr>
+        <tr>
 
-<th>Código</th>
+            <th>
+                Nombre
+            </th>
 
-<th>Carrera</th>
+            <th>
+                Descripción
+            </th>
 
-<th>Escuela</th>
+            <th>
+                Acciones
+            </th>
 
-<th>Duración</th>
+        </tr>
 
-<th>Acciones</th>
+    </thead>
 
-</tr>
 
-</thead>
+    <tbody id="tablaCarreras">
 
-<tbody>
+        <!--
+            Los registros provenientes
+            del servidor aparecerán aquí.
+        -->
 
-<tr>
-
-<td>IS-101</td>
-
-<td>Ingeniería del Software</td>
-
-<td>Ingeniería</td>
-
-<td>4 años</td>
-
-<td>
-
-<a href="#" class="editar">Editar</a>
-
-<a href="#" class="eliminar">Eliminar</a>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td>DW-201</td>
-
-<td>Diseño Web</td>
-
-<td>Tecnología</td>
-
-<td>3 años</td>
-
-<td>
-
-<a href="#" class="editar">Editar</a>
-
-<a href="#" class="eliminar">Eliminar</a>
-
-</td>
-
-</tr>
-<tr>
-
-<td>AD-105</td>
-
-<td>Administración de Empresas</td>
-
-<td>Administración</td>
-
-<td>4 años</td>
-
-<td>
-
-<a href="#" class="editar">Editar</a>
-
-<a href="#" class="eliminar">Eliminar</a>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td>CD-301</td>
-
-<td>Ciencia de Datos</td>
-
-<td>Tecnología</td>
-
-<td>4 años</td>
-
-<td>
-
-<a href="#" class="editar">Editar</a>
-
-<a href="#" class="eliminar">Eliminar</a>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td>CS-220</td>
-
-<td>Ciberseguridad</td>
-
-<td>Ingeniería</td>
-
-<td>4 años</td>
-
-<td>
-
-<a href="#" class="editar">Editar</a>
-
-<a href="#" class="eliminar">Eliminar</a>
-
-</td>
-
-</tr>
-
-</tbody>
+    </tbody>
 
 </table>
+```
 
-</div>
+</main>
 
 <footer>
 
+```
 <p>
 
-Universidad CENFOTEC © 2026
+    Universidad CENFOTEC © 2026
 
-<br>
+    <br>
 
-Sistema de Gestión de Egresados
+    Sistema de Gestión de Egresados
 
 </p>
+```
 
 </footer>
 
-<script src="js/script.js"></script>
+<script src="js/carreras.js"></script>
 
 </body>
 

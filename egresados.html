@@ -19,7 +19,7 @@
 
     <div class="logo">
 
-        <img src="assets/img/logo.png" alt="Logo">
+        <img src="assets/img/logo.png" alt="Logo CENFOTEC">
 
         <h1>CENFOTEC</h1>
 
@@ -45,228 +45,223 @@
 
 </header>
 
+
 <div class="container">
 
-<h2>Registro de Egresados</h2>
+    <h2>Registro de Egresados</h2>
 
-<form id="formEgresado">
 
-<div class="form-group">
+    <!-- =========================
+         FORMULARIO DE EGRESADOS
+    ========================== -->
 
-<label>Nombre completo</label>
+    <form id="formEgresado">
 
-<input
-type="text"
-id="nombre"
-placeholder="Ingrese el nombre completo">
+        <div class="form-group">
+
+            <label for="nombre">Nombre completo</label>
+
+            <input
+                type="text"
+                id="nombre"
+                placeholder="Ingrese el nombre completo"
+                required>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="cedula">Identificación</label>
+
+            <input
+                type="text"
+                id="cedula"
+                placeholder="123456789"
+                required>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="correo">Correo electrónico</label>
+
+            <input
+                type="email"
+                id="correo"
+                placeholder="correo@ejemplo.com"
+                required>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="telefono">Teléfono</label>
+
+            <input
+                type="text"
+                id="telefono"
+                placeholder="88888888"
+                required>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="fecha">Fecha de registro</label>
+
+            <input
+                type="date"
+                id="fecha"
+                required>
+
+        </div>
+
+
+        <!-- =========================
+             INFORMACIÓN LABORAL
+             CAMPOS OPCIONALES
+        ========================== -->
+
+        <div class="form-group">
+
+            <label for="empresa">Empresa actual</label>
+
+            <input
+                type="text"
+                id="empresa"
+                placeholder="Nombre de la empresa">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="puesto">Puesto actual</label>
+
+            <input
+                type="text"
+                id="puesto"
+                placeholder="Ej. Desarrollador Web">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="areaProfesional">Área profesional</label>
+
+            <input
+                type="text"
+                id="areaProfesional"
+                placeholder="Ej. Tecnología">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="linkedin">LinkedIn</label>
+
+            <input
+                type="text"
+                id="linkedin"
+                placeholder="linkedin.com/in/usuario">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="portafolio">Portafolio</label>
+
+            <input
+                type="text"
+                id="portafolio"
+                placeholder="www.misitio.com">
+
+        </div>
+
+
+        <div id="mensaje" class="mensaje"></div>
+
+
+        <div class="form-group full">
+
+            <button type="submit">
+
+                Guardar Egresado
+
+            </button>
+
+        </div>
+
+    </form>
+
+
+    <hr style="margin:40px 0;">
+
+
+    <!-- =========================
+         LISTA DE EGRESADOS
+    ========================== -->
+
+    <h2>Lista de Egresados</h2>
+
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Identificación</th>
+
+                <th>Nombre</th>
+
+                <th>Correo</th>
+
+                <th>Teléfono</th>
+
+                <th>Empresa</th>
+
+                <th>Puesto</th>
+
+                <th>Acciones</th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody id="tablaEgresados">
+
+            <!-- Los registros serán cargados mediante JavaScript -->
+
+        </tbody>
+
+    </table>
 
 </div>
 
-<div class="form-group">
-
-<label>Cédula</label>
-
-<input
-type="text"
-id="cedula"
-placeholder="1-1111-1111">
-
-</div>
-
-<div class="form-group">
-
-<label>Correo electrónico</label>
-
-<input
-type="email"
-id="correo"
-placeholder="correo@ejemplo.com">
-
-</div>
-
-<div class="form-group">
-
-<label>Teléfono</label>
-
-<input
-type="text"
-id="telefono"
-placeholder="88888888">
-
-</div>
-
-<div class="form-group">
-
-<label>Fecha de nacimiento</label>
-
-<input
-type="date"
-id="fecha">
-
-</div>
-
-<div class="form-group">
-
-<label>Sexo</label>
-
-<select id="sexo">
-
-<option value="">Seleccione</option>
-
-<option>Masculino</option>
-
-<option>Femenino</option>
-
-<option>Prefiero no indicar</option>
-
-</select>
-
-</div>
-
-<div class="form-group">
-
-<label>Carrera</label>
-
-<select id="carrera">
-
-<option value="">Seleccione</option>
-
-<option>Ingeniería del Software</option>
-
-<option>Diseño Web</option>
-
-<option>Administración</option>
-
-<option>Ciberseguridad</option>
-
-<option>Ciencia de Datos</option>
-
-</select>
-
-</div>
-
-<div class="form-group">
-
-<label>Año de graduación</label>
-
-<input
-type="number"
-id="graduacion"
-placeholder="2026">
-
-</div>
-
-<div class="form-group">
-
-<label>Estado laboral</label>
-
-<select id="estado">
-
-<option value="">Seleccione</option>
-
-<option>Empleado</option>
-
-<option>Desempleado</option>
-
-<option>Emprendedor</option>
-
-<option>Estudiante</option>
-
-</select>
-
-</div>
-
-<div class="form-group">
-
-<label>Empresa donde labora</label>
-
-<input
-type="text"
-id="empresa"
-placeholder="Nombre de la empresa">
-
-</div>
-
-<div class="form-group full">
-
-<label>Dirección</label>
-
-<input
-type="text"
-id="direccion"
-placeholder="Dirección completa">
-
-</div>
-
-<div class="form-group full">
-
-<label>Descripción</label>
-
-<textarea
-id="descripcion"
-placeholder="Información adicional del egresado..."></textarea>
-
-</div>
-
-<div id="mensaje" class="mensaje"></div>
-
-<div class="form-group full">
-
-<button type="submit">
-
-Guardar Egresado
-
-</button>
-
-</div>
-
-</form>
-
-<hr style="margin:40px 0;">
-
-<h2>Lista de Egresados</h2>
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Nombre</th>
-
-<th>Carrera</th>
-
-<th>Correo</th>
-
-<th>Estado</th>
-
-<th>Acciones</th>
-
-</tr>
-
-</thead>
-
-<tbody id="tablaEgresados">
-
-</tbody>
-
-</table>
-
-</div>
 
 <footer>
 
-<p>
+    <p>
 
-Universidad CENFOTEC © 2026
+        Universidad CENFOTEC © 2026
 
-<br>
+        <br>
 
-Sistema de Gestión de Egresados
+        Sistema de Gestión de Egresados
 
-</p>
+    </p>
 
 </footer>
+
 
 <script src="js/validaciones.js"></script>
 

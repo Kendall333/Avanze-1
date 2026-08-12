@@ -1,241 +1,810 @@
-// ===============================
-// GESTIÓN DE EGRESADOS
-// ===============================
+// ==========================================
+// CONFIGURACIÓN DE LA API
+// ==========================================
 
-const formulario = document.querySelector("#formEgresado");
+const API_URL = "http://localhost:3000/egresados";
+
+
+// ==========================================
+// ELEMENTOS DEL HTML
+// ==========================================
+
+const formulario = document.getElementById("formEgresado");
+const tablaEgresados = document.getElementById("tablaEgresados");
 const mensaje = document.getElementById("mensaje");
-const tabla = document.getElementById("tablaEgresados");
 
-let listaEgresados = JSON.parse(localStorage.getItem("egresados")) || [];
-let indiceEditar = -1;
 
-// ===============================
-// MOSTRAR TABLA
-// ===============================
+// ==========================================
+// LOCALSTORAGE
+// ==========================================
 
-function mostrarEgresados() {
+let egresadosEliminados =
+    JSON.parse(localStorage.getItem("egresadosEliminados")) || [];
 
-    if (!tabla) return;
+let egresadosEditados =
+    JSON.parse(localStorage.getItem("egresadosEditados")) || [];
 
-    tabla.innerHTML = "";
+let indiceEditar = null;
 
-    listaEgresados.forEach((egresado, index) => {
 
-        tabla.innerHTML += `
-        <tr>
-            <td>${egresado.nombre}</td>
-            <td>${egresado.carrera}</td>
-            <td>${egresado.correo}</td>
-            <td>${egresado.estado}</td>
-            <td>
-                <button type="button" onclick="editarEgresado(${index})">Editar</button>
-                <button type="button" onclick="eliminarEgresado(${index})">Eliminar</button>
-            </td>
-        </tr>
-        `;
+// ==========================================
+// CARGAR EGRESADOS
+// ==========================================
 
-    });
+document.addEventListener("DOMContentLoaded", function () {
+    obtenerEgresados();
+});
 
+
+// ==========================================
+// GET - OBTENER EGRESADOS
+// ==========================================
+
+async function obtenerEgresados() {
+
+    try {
+
+        const respuesta = await fetch(API_URL);
+
+        if (!respuesta.ok) {
+            throw new Error("No se pudieron obtener los egresados.");
+        }
+
+        const egresados = await respuesta.json();
+
+        mostrarEgresados(egresados);
+
+    } catch (error) {
+
+        console.error("Error en GET:", error);
+
+        mostrarMensaje(
+            "No fue posible cargar los egresados.",
+            "error"
+        );
+    }
 }
 
-// Mostrar al abrir la página
-mostrarEgresados();
+
+// ==========================================
+// MOSTRAR EGRESADOS
+// ==========================================
+
+function mostrarEgresados(egresados) {
+
+    tablaEgresados.innerHTML = "";
 
 
-// ===============================
-// GUARDAR EGRESADO
-// ===============================
+    const egresadosVisibles = egresados
+        .filter(function (egresado) {
+
+            return !egresadosEliminados.includes(
+                egresado._id
+            );
+
+        })
+        .map(function (egresado) {
+
+            if (egresadosEditados[egresado._id]) {
+
+                return Object.assign(
+                    {},
+                    egresado,
+                    egresadosEditados[egresado._id]
+                );
+            }
+
+            return egresado;
+        });
+
+
+    if (egresadosVisibles.length === 0) {
+
+        tablaEgresados.innerHTML =
+            "<tr>" +
+            "<td colspan=\"7\">" +
+            "No hay egresados registrados." +
+            "</td>" +
+            "</tr>";
+
+        return;
+    }
+
+
+    egresadosVisibles.forEach(function (egresado) {
+
+        const fila = document.createElement("tr");
+
+
+        fila.innerHTML =
+            "<td>" +
+                (egresado.identificacion || "") +
+            "</td>" +
+
+            "<td>" +
+                (egresado.nombreCompleto || "") +
+            "</td>" +
+
+            "<td>" +
+                (egresado.correoElectronico || "") +
+            "</td>" +
+
+            "<td>" +
+                (egresado.telefono || "") +
+            "</td>" +
+
+            "<td>" +
+                (egresado.empresaActual || "No registrada") +
+            "</td>" +
+
+            "<td>" +
+                (egresado.puestoActual || "No registrado") +
+            "</td>" +
+
+            "<td>" +
+
+                "<button " +
+                "type=\"button\" " +
+                "onclick=\"verEgresado('" +
+                egresado._id +
+                "')\">" +
+                "Ver" +
+                "</button> " +
+
+                "<button " +
+                "type=\"button\" " +
+                "onclick=\"editarEgresado('" +
+                egresado._id +
+                "')\">" +
+                "Editar" +
+                "</button> " +
+
+                "<button " +
+                "type=\"button\" " +
+                "onclick=\"eliminarEgresado('" +
+                egresado._id +
+                "')\">" +
+                "Eliminar" +
+                "</button>" +
+
+            "</td>";
+
+
+        tablaEgresados.appendChild(fila);
+
+    });
+}
+
+
+// ==========================================
+// FORMULARIO
+// ==========================================
 
 if (formulario) {
 
-formulario.addEventListener("submit", function(e){
+    formulario.addEventListener(
+        "submit",
+        async function (evento) {
 
-e.preventDefault();
+            evento.preventDefault();
 
-mensaje.textContent = "";
-mensaje.className = "";
 
-const nombre = document.getElementById("nombre").value.trim();
-const cedula = document.getElementById("cedula").value.trim();
-const correo = document.getElementById("correo").value.trim();
-const telefono = document.getElementById("telefono").value.trim();
-const fecha = document.getElementById("fecha").value;
-const sexo = document.getElementById("sexo").value;
-const carrera = document.getElementById("carrera").value;
-const graduacion = document.getElementById("graduacion").value;
-const estado = document.getElementById("estado").value;
-const empresa = document.getElementById("empresa").value.trim();
-const direccion = document.getElementById("direccion").value.trim();
-const descripcion = document.getElementById("descripcion").value.trim();
+            // ==================================
+            // OBTENER DATOS
+            // ==================================
 
-const correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const telefonoRegex = /^[0-9]{8}$/;
-const cedulaRegex = /^[0-9]-[0-9]{4}-[0-9]{4}$/;
+            const identificacion =
+                document.getElementById("cedula").value.trim();
 
-if(nombre===""){
-mensaje.textContent="Debe ingresar el nombre.";
-mensaje.className="error";
-return;
+            const nombreCompleto =
+                document.getElementById("nombre").value.trim();
+
+            const correoElectronico =
+                document.getElementById("correo").value.trim();
+
+            const telefono =
+                document.getElementById("telefono").value.trim();
+
+            const fechaRegistro =
+                document.getElementById("fecha").value;
+
+            const empresaActual =
+                document.getElementById("empresa").value.trim();
+
+            const puestoActual =
+                document.getElementById("puesto").value.trim();
+
+            const areaProfesional =
+                document.getElementById("areaProfesional").value.trim();
+
+            const linkedin =
+                document.getElementById("linkedin").value.trim();
+
+            const portafolio =
+                document.getElementById("portafolio").value.trim();
+
+
+            // ==================================
+            // VALIDACIONES
+            // ==================================
+
+            if (
+                identificacion === "" ||
+                nombreCompleto === "" ||
+                correoElectronico === "" ||
+                telefono === "" ||
+                fechaRegistro === ""
+            ) {
+
+                mostrarMensaje(
+                    "Por favor complete todos los campos obligatorios.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            // ==================================
+            // IDENTIFICACIÓN
+            // ==================================
+
+            const patronIdentificacion =
+                /^[0-9]+$/;
+
+
+            if (
+                !patronIdentificacion.test(
+                    identificacion
+                )
+            ) {
+
+                mostrarMensaje(
+                    "La identificación solo debe contener números.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            // ==================================
+            // NOMBRE
+            // ==================================
+
+            const patronNombre =
+                /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+
+
+            if (
+                !patronNombre.test(
+                    nombreCompleto
+                )
+            ) {
+
+                mostrarMensaje(
+                    "El nombre solo debe contener letras.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            // ==================================
+            // CORREO
+            // ==================================
+
+            const patronCorreo =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+            if (
+                !patronCorreo.test(
+                    correoElectronico
+                )
+            ) {
+
+                mostrarMensaje(
+                    "Ingrese un correo electrónico válido.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            // ==================================
+            // TELÉFONO
+            // ==================================
+
+            const patronTelefono =
+                /^[0-9]{4}-?[0-9]{4}$/;
+
+
+            if (
+                !patronTelefono.test(
+                    telefono
+                )
+            ) {
+
+                mostrarMensaje(
+                    "El teléfono debe tener 8 números.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            // ==================================
+            // CREAR OBJETO
+            // ==================================
+
+            const nuevoEgresado = {
+
+                identificacion:
+                    identificacion,
+
+                nombreCompleto:
+                    nombreCompleto,
+
+                correoElectronico:
+                    correoElectronico,
+
+                telefono:
+                    telefono,
+
+                fechaRegistro:
+                    fechaRegistro
+            };
+
+
+            if (empresaActual !== "") {
+
+                nuevoEgresado.empresaActual =
+                    empresaActual;
+            }
+
+
+            if (puestoActual !== "") {
+
+                nuevoEgresado.puestoActual =
+                    puestoActual;
+            }
+
+
+            if (areaProfesional !== "") {
+
+                nuevoEgresado.areaProfesional =
+                    areaProfesional;
+            }
+
+
+            if (linkedin !== "") {
+
+                nuevoEgresado.linkedin =
+                    linkedin;
+            }
+
+
+            if (portafolio !== "") {
+
+                nuevoEgresado.portafolio =
+                    portafolio;
+            }
+
+
+            // ==================================
+            // EDITAR
+            // ==================================
+
+            if (indiceEditar !== null) {
+
+                egresadosEditados[indiceEditar] =
+                    nuevoEgresado;
+
+
+                localStorage.setItem(
+                    "egresadosEditados",
+                    JSON.stringify(
+                        egresadosEditados
+                    )
+                );
+
+
+                formulario.reset();
+
+                indiceEditar = null;
+
+
+                mostrarMensaje(
+                    "Egresado editado correctamente.",
+                    "exito"
+                );
+
+
+                await obtenerEgresados();
+
+                return;
+            }
+
+
+            // ==================================
+            // POST - REGISTRAR
+            // ==================================
+
+            try {
+
+                const respuesta =
+                    await fetch(
+                        API_URL,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    nuevoEgresado
+                                )
+                        }
+                    );
+
+
+                if (!respuesta.ok) {
+
+                    throw new Error(
+                        "El servidor rechazó el registro."
+                    );
+                }
+
+
+                await respuesta.json();
+
+
+                formulario.reset();
+
+
+                mostrarMensaje(
+                    "Egresado registrado correctamente.",
+                    "exito"
+                );
+
+
+                await obtenerEgresados();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Error en POST:",
+                    error
+                );
+
+
+                mostrarMensaje(
+                    "Ocurrió un error al registrar el egresado.",
+                    "error"
+                );
+            }
+
+        }
+    );
 }
 
-if(!cedulaRegex.test(cedula)){
-mensaje.textContent="La cédula debe tener el formato 1-1111-1111.";
-mensaje.className="error";
-return;
-}
 
-if(!correoRegex.test(correo)){
-mensaje.textContent="Ingrese un correo válido.";
-mensaje.className="error";
-return;
-}
+// ==========================================
+// VER EGRESADO
+// ==========================================
 
-if(!telefonoRegex.test(telefono)){
-mensaje.textContent="El teléfono debe tener 8 dígitos.";
-mensaje.className="error";
-return;
-}
+async function verEgresado(id) {
 
-if(fecha===""){
-mensaje.textContent="Seleccione la fecha de nacimiento.";
-mensaje.className="error";
-return;
-}
+    try {
 
-if(sexo===""){
-mensaje.textContent="Seleccione el sexo.";
-mensaje.className="error";
-return;
-}
-
-if(carrera===""){
-mensaje.textContent="Seleccione una carrera.";
-mensaje.className="error";
-return;
-}
-
-if(graduacion===""){
-mensaje.textContent="Ingrese el año de graduación.";
-mensaje.className="error";
-return;
-}
-
-if(estado===""){
-mensaje.textContent="Seleccione el estado laboral.";
-mensaje.className="error";
-return;
-}
-
-if(empresa===""){
-mensaje.textContent="Ingrese el nombre de la empresa.";
-mensaje.className="error";
-return;
-}
-
-if(direccion===""){
-mensaje.textContent="Ingrese la dirección.";
-mensaje.className="error";
-return;
-}
-
-if(descripcion===""){
-mensaje.textContent="Ingrese una descripción.";
-mensaje.className="error";
-return;
-}
-
-const egresado = {
-nombre,
-cedula,
-correo,
-telefono,
-fecha,
-sexo,
-carrera,
-graduacion,
-estado,
-empresa,
-direccion,
-descripcion
-};
-
-// ===============================
-// GUARDAR O EDITAR
-// ===============================
-
-if (indiceEditar === -1) {
-
-    listaEgresados.push(egresado);
-
-} else {
-
-    listaEgresados[indiceEditar] = egresado;
-    indiceEditar = -1;
-
-}
-
-localStorage.setItem("egresados", JSON.stringify(listaEgresados));
-
-mensaje.textContent = "✅ Registro guardado correctamente.";
-mensaje.className = "exito";
-
-formulario.reset();
-
-mostrarEgresados();
-
-});
-
-} // Fin del if(formulario)
+        const respuesta =
+            await fetch(API_URL);
 
 
-// ===============================
-// EDITAR
-// ===============================
+        if (!respuesta.ok) {
 
-function editarEgresado(index){
+            throw new Error(
+                "No se pudieron obtener los datos."
+            );
+        }
 
-const egresado = listaEgresados[index];
 
-document.getElementById("nombre").value = egresado.nombre;
-document.getElementById("cedula").value = egresado.cedula;
-document.getElementById("correo").value = egresado.correo;
-document.getElementById("telefono").value = egresado.telefono;
-document.getElementById("fecha").value = egresado.fecha;
-document.getElementById("sexo").value = egresado.sexo;
-document.getElementById("carrera").value = egresado.carrera;
-document.getElementById("graduacion").value = egresado.graduacion;
-document.getElementById("estado").value = egresado.estado;
-document.getElementById("empresa").value = egresado.empresa;
-document.getElementById("direccion").value = egresado.direccion;
-document.getElementById("descripcion").value = egresado.descripcion;
+        const egresados =
+            await respuesta.json();
 
-indiceEditar = index;
 
-window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-});
+        let egresado =
+            egresados.find(
+                function (item) {
 
+                    return item._id === id;
+                }
+            );
+
+
+        if (!egresado) {
+
+            mostrarMensaje(
+                "No se encontró el egresado.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (egresadosEditados[id]) {
+
+            egresado =
+                Object.assign(
+                    {},
+                    egresado,
+                    egresadosEditados[id]
+                );
+        }
+
+
+        alert(
+            "Identificación: " +
+            (egresado.identificacion || "") +
+
+            "\n\nNombre: " +
+            (egresado.nombreCompleto || "") +
+
+            "\n\nCorreo: " +
+            (egresado.correoElectronico || "") +
+
+            "\n\nTeléfono: " +
+            (egresado.telefono || "") +
+
+            "\n\nFecha de registro: " +
+            (egresado.fechaRegistro || "") +
+
+            "\n\nEmpresa actual: " +
+            (egresado.empresaActual || "No registrada") +
+
+            "\n\nPuesto actual: " +
+            (egresado.puestoActual || "No registrado") +
+
+            "\n\nÁrea profesional: " +
+            (egresado.areaProfesional || "No registrada") +
+
+            "\n\nLinkedIn: " +
+            (egresado.linkedin || "No registrado") +
+
+            "\n\nPortafolio: " +
+            (egresado.portafolio || "No registrado")
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error al consultar egresado:",
+            error
+        );
+
+
+        mostrarMensaje(
+            "No fue posible consultar el egresado.",
+            "error"
+        );
+    }
 }
 
 
-// ===============================
-// ELIMINAR
-// ===============================
+// ==========================================
+// EDITAR EGRESADO
+// ==========================================
 
-function eliminarEgresado(index){
+async function editarEgresado(id) {
 
-if(confirm("¿Desea eliminar este registro?")){
+    try {
 
-listaEgresados.splice(index,1);
+        const respuesta =
+            await fetch(API_URL);
 
-localStorage.setItem(
-    "egresados",
-    JSON.stringify(listaEgresados)
-);
 
-mostrarEgresados();
+        if (!respuesta.ok) {
 
+            throw new Error(
+                "No se pudieron obtener los egresados."
+            );
+        }
+
+
+        const egresados =
+            await respuesta.json();
+
+
+        let egresado =
+            egresados.find(
+                function (item) {
+
+                    return item._id === id;
+                }
+            );
+
+
+        if (!egresado) {
+
+            mostrarMensaje(
+                "No se encontró el egresado.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (egresadosEditados[id]) {
+
+            egresado =
+                Object.assign(
+                    {},
+                    egresado,
+                    egresadosEditados[id]
+                );
+        }
+
+
+        document.getElementById("cedula").value =
+            egresado.identificacion || "";
+
+        document.getElementById("nombre").value =
+            egresado.nombreCompleto || "";
+
+        document.getElementById("correo").value =
+            egresado.correoElectronico || "";
+
+        document.getElementById("telefono").value =
+            egresado.telefono || "";
+
+        document.getElementById("fecha").value =
+            egresado.fechaRegistro || "";
+
+        document.getElementById("empresa").value =
+            egresado.empresaActual || "";
+
+        document.getElementById("puesto").value =
+            egresado.puestoActual || "";
+
+        document.getElementById("areaProfesional").value =
+            egresado.areaProfesional || "";
+
+        document.getElementById("linkedin").value =
+            egresado.linkedin || "";
+
+        document.getElementById("portafolio").value =
+            egresado.portafolio || "";
+
+
+        indiceEditar = id;
+
+
+        mostrarMensaje(
+            "Modifique los datos y presione Guardar.",
+            "exito"
+        );
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Error al editar egresado:",
+            error
+        );
+
+
+        mostrarMensaje(
+            "No fue posible editar el egresado.",
+            "error"
+        );
+    }
 }
 
+
+// ==========================================
+// ELIMINAR EGRESADO
+// ==========================================
+
+async function eliminarEgresado(id) {
+
+    const confirmar =
+        confirm(
+            "¿Desea eliminar este egresado?"
+        );
+
+
+    if (!confirmar) {
+        return;
+    }
+
+
+    if (
+        !egresadosEliminados.includes(id)
+    ) {
+
+        egresadosEliminados.push(id);
+    }
+
+
+    localStorage.setItem(
+        "egresadosEliminados",
+        JSON.stringify(
+            egresadosEliminados
+        )
+    );
+
+
+    if (egresadosEditados[id]) {
+
+        delete egresadosEditados[id];
+
+
+        localStorage.setItem(
+            "egresadosEditados",
+            JSON.stringify(
+                egresadosEditados
+            )
+        );
+    }
+
+
+    await obtenerEgresados();
+
+
+    mostrarMensaje(
+        "Egresado eliminado correctamente.",
+        "exito"
+    );
+}
+
+
+// ==========================================
+// MOSTRAR MENSAJES
+// ==========================================
+
+function mostrarMensaje(
+    texto,
+    tipo
+) {
+
+    if (!mensaje) {
+        return;
+    }
+
+
+    mensaje.textContent = texto;
+
+
+    mensaje.className =
+        "mensaje " + tipo;
+
+
+    setTimeout(
+        function () {
+
+            mensaje.textContent = "";
+
+            mensaje.className =
+                "mensaje";
+
+        },
+        5000
+    );
 }
